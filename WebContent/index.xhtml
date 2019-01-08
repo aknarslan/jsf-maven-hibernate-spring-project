@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> 
+
+<h:head></h:head> 
+<body> 
+ <h:form prependId="false">
+ 
+	<p:panel id="orderPanel" header="Sipariş Sorgulama">
+        <h:panelGrid columns="2" cellpadding="10">
+            <p:outputLabel value="Müşteri :" />
+            <p:selectOneMenu id="dealer" value="#{orderListBean.customerId}"
+                autoWidth="false" style="width: 200px;">
+				<f:selectItem itemLabel="Seçiniz" itemValue="" noSelectionOption="true" />
+				<f:selectItems value="#{orderListBean.customers}" var="d" itemLabel="#{d.name}" itemValue="#{d.id}" />
+				<p:ajax event="itemSelect"  update="orderPanel" />
+			</p:selectOneMenu>
+            
+            <p:outputLabel value="Sipariş Tipi :" />
+            <p:selectOneMenu id="orderTypeMenu" value="#{orderListBean.orderType}"  autoWidth="false" style="width: 200px;">
+            <f:selectItem itemLabel="Seçiniz" itemValue="" noSelectionOption="true" />
+            <f:selectItems value="#{orderListBean.orderTypes}" var="o" itemLabel="#{o.typeName}" itemValue="#{o.typeName}" />
+            </p:selectOneMenu>
+            
+            <p:outputLabel value="Durum :" />
+            <p:selectOneMenu id="orderStatusMenu" value="#{orderListBean.status}" autoWidth="false" style="width: 200px;">
+            <f:selectItem itemLabel="Seçiniz" itemValue="" noSelectionOption="true" />
+            <f:selectItem itemLabel="Yeni" itemValue="NEW"  />
+            <f:selectItem itemLabel="Onaylı" itemValue="APPROVED" />
+            </p:selectOneMenu>
+            
+            <p:outputLabel value="Açıklama :" />
+            <p:inputText id="explanation" value="#{orderListBean.explanation}"  autoWidth="false" style="width: 230px;">
+            </p:inputText>
+            
+            <p:outputLabel value="Sipariş No :" />
+            <p:inputText id="orderId" value="#{orderListBean.orderId}"  autoWidth="false" style="width: 230px;">
+            </p:inputText>
+            
+            <p:outputLabel value="" />
+            <p:outputPanel>
+            <p:commandButton value="Sorgula" action="#{orderListBean.filterOrders()}" update="@form" process="@form"></p:commandButton>
+            <p:commandButton value="Yeni Kayıt" action="#{orderListBean.redirectToNewOrderDetailPage()}"></p:commandButton>
+            </p:outputPanel>
+            
+        </h:panelGrid>
+    </p:panel>
+    
+    <p:outputPanel id ="orderResultPanel">
+    <p:panel  header="Sipariş Listesi" style="margin-bottom:20px">
+         <p:dataTable var="order" value="#{orderListBean.orders}"  style="margin-bottom:40px">
+        <f:facet name="header">
+            Siparişler
+        </f:facet>
+        <p:column headerText="Sipariş No">
+            <h:outputText value="#{order.id}" />
+        </p:column>
+ 
+        <p:column headerText="Müşteri" >
+            <h:outputText value="#{order.customer.name}  #{order.customer.surname}" />
+        </p:column>
+ 
+        <p:column headerText="Durum">
+            <h:outputText value="#{order.status}"/>
+        </p:column>
+ 
+        <p:column headerText="Sipariş Tarihi" >
+            <h:outputText value="#{order.date}" />
+        </p:column>
+        <p:column headerText="Detay" >
+            <p:commandButton action="#{orderListBean.redirectToOrderDetailPage()}" process="@form" ajax="false" value="Detay">
+    			 <f:setPropertyActionListener target="#{orderDetailBean.selectedOrder}" value="#{order}" />
+			</p:commandButton>
+        </p:column>
+    </p:dataTable>
+    </p:panel>
+    
+    </p:outputPanel>
+    
+    
+	
+</h:form>
+</body> 
+</html>

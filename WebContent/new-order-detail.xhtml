@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> 
+
+
+
+
+<h:head></h:head> 
+
+
+<body> 
+
+
+	
+#{newOrderDetailBean.init()}
+	
+	
+	
+
+	
+	<p:panel id="orderDetailPanel" header="Yeni Sipariş">
+		<h:form prependId="false">
+        <h:panelGrid columns="2" cellpadding="10">
+          
+            <p:outputLabel value="Müşteri :" />
+            <p:selectOneMenu  id="customerMenu" value="#{newOrderDetailBean.customerId}"   autoWidth="false" style="width: 200px;">
+            	<f:selectItem itemLabel="Seçiniz" itemValue="" noSelectionOption="true" />
+            	<f:selectItems  value="#{newOrderDetailBean.customers}" var="d" itemLabel="#{d.name}" itemValue="#{d.id}" />
+            	<p:ajax event="itemSelect"></p:ajax>
+            </p:selectOneMenu>
+            
+            <p:outputLabel value="Sipariş Tipi :" />
+            <p:selectOneMenu id="orderTypeMenu" value="#{newOrderDetailBean.orderType}"  autoWidth="false" style="width: 200px;" >
+            <f:selectItem itemLabel="Seçiniz" itemValue=""  />
+            <f:selectItems value="#{newOrderDetailBean.orderTypes}" var="o" itemLabel="#{o.typeName}" itemValue="#{o.typeName}" />
+            <p:ajax event="itemSelect"></p:ajax>
+            </p:selectOneMenu>
+            
+            <p:outputLabel value="Teslimat Adresi :" />
+            <p:inputTextarea value="#{newOrderDetailBean.newOrder.shippingAddress}" cols="22"></p:inputTextarea>
+            
+            <p:outputLabel value="Açıklama :" />
+            <p:inputTextarea value="#{newOrderDetailBean.newOrder.explanation}" cols="22"></p:inputTextarea>
+            
+             
+            
+            <p:outputLabel value="" />
+            <p:outputPanel>
+            <p:commandButton value="Geri" action="#{newOrderDetailBean.redirectToOrderListPage()}" style="width:  120px;" ></p:commandButton>
+            <p:spacer width="5px" />
+            <p:commandButton value="Kaydet" style="width: 120px;" action="#{newOrderDetailBean.saveOrder()}" update="@all" ></p:commandButton>
+        	</p:outputPanel>
+            
+        </h:panelGrid>
+         </h:form>
+        <hr/>
+        
+      
+
+	
+		<h:form>
+        
+        <div style="border: 1px solid;" >
+        <h:panelGrid columns="2">
+        	<p:commandButton value="Yeni Detay" type="button" onclick="PF('detailDialog').show();" ></p:commandButton>
+            <p:commandButton value="Sil" ></p:commandButton>
+        </h:panelGrid>
+        </div>
+        </h:form>
+        
+        <h:form id="data">
+         <p:dataTable var="order" id="orderDetails" selection="true"  
+         value="#{newOrderDetailBean.orderDetails}" style="margin-bottom:40px" rowKey="#{order}">
+        <f:facet name="header">
+            Sipariş Kalemleri
+        </f:facet>
+        <p:column selectionMode="single" style="width:16px;text-align:center"/>
+        
+ 
+        <p:column headerText="Ürün" >
+            <h:outputText value="#{order.product}" />
+        </p:column>
+ 
+        <p:column headerText="Miktar">
+            <h:outputText value="#{order.quantity}" />
+        </p:column>
+ 
+        <p:column headerText="Fiyat" >
+            <h:outputText value="#{order.price}" />
+        </p:column>
+        <p:column headerText="Tutar" >
+            <h:outputText value="#{newOrderDetailBean.calculatePrice(order.price, order.quantity)}" />
+        </p:column>
+    </p:dataTable>
+    
+    
+    
+    <div class="right">
+    <h:panelGrid columns="2" style="align: right">
+    	<p:outputLabel value="Toplam Tutar:" />
+    	<h:inputText style="width:100px"  value="#{newOrderDetailBean.totalPrice}" />
+    </h:panelGrid>
+     
+    	</div>  
+    	</h:form> 
+    </p:panel>
+    
+
+     
+    
+    <p:dialog header="Yeni Sipariş Kalemi" widgetVar="detailDialog" modal="true" height="300">
+    	<h:form>
+    	<h:panelGrid columns="2" cellpadding="10">
+    	 <p:outputLabel value="Ürün :" />
+            <p:inputText id="product" value="#{newOrderDetailBean.newProduct}"  autoWidth="false" style="width: 230px;">
+            </p:inputText>
+            
+            <p:outputLabel value="Miktar:" />
+            <p:inputNumber id="quantity" value="#{newOrderDetailBean.quantity}" decimalPlaces="0"  autoWidth="false" style="width: 230px;">
+            </p:inputNumber>
+            
+            <p:outputLabel value="Fiyat :" />
+            <p:inputNumber id="price" value="#{newOrderDetailBean.price}" decimalPlaces="2"   autoWidth="false" style="width: 230px;">
+            </p:inputNumber>
+            
+            <p:commandButton value="İptal" onclick="PF('detailDialog').hide();" ></p:commandButton>
+            
+            <p:commandButton value="Kaydet" action="#{newOrderDetailBean.saveDetails()}" update="data" process="@parent"   ></p:commandButton>
+    	</h:panelGrid>
+    	</h:form>
+	</p:dialog>  
+	
+	
+    
+  <style type="text/css">
+.right {
+	
+  position: absolute;
+  right: 0px;
+  width: 35%;
+  margin-top: -30px;
+
+}
+
+</style>
+
+
+
+
+
+
+
+</body> 
+</html>
